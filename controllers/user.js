@@ -3,7 +3,7 @@ import { OTP } from "../models/otp.js";
 import { User } from "../models/user.js";
 import { getOtpHtml } from "../utils/html.js";
 import { redisAvailable } from "../utils/redis.js";
-import sendOtp from "../utils/sendotp.js";
+import sendOtp from "../utils/sendotp.js"
 import tryCatch from "../utils/trycatch.js";
 
 export const loginUser = tryCatch(async (req, res) => {

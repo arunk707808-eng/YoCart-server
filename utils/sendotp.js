@@ -1,19 +1,27 @@
-import { Resend } from 'resend';
-
-const resend = new Resend(process.env.Resend_api_key);
+import { Resend } from "resend";
 
 const sendOtp = async ({ email, subject, html }) => {
+
+  if (!process.env.RESEND_API_KEY) {
+    throw new Error("RESEND_API_KEY missing in environment");
+  }
+
+  const resend = new Resend(process.env.RESEND_API_KEY);
+
   try {
-    await resend.emails.send({
-      from: 'onboarding@resend.dev',
+    const response = await resend.emails.send({
+      from: 'onboarding@resend.dev', // test phase
       to: email,
       subject,
       html,
     });
-    console.log("OTP sent successfully");
+
+    console.log("OTP sent:", response);
+    return response;
+
   } catch (error) {
     console.error("MAIL ERROR:", error);
-    throw error;
+    throw new Error("Failed to send OTP email");
   }
 };
 
