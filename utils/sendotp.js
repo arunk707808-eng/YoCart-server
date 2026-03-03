@@ -1,22 +1,11 @@
-import { createTransport } from "nodemailer";
-if (!process.env.GMAIL || !process.env.PASSWORD) {
-  throw new Error("Email credentials missing in environment variables");
-}
+import { Resend } from 'resend';
 
-const transport = createTransport({
-  host: "smtp.gmail.com",
-  port: 587,
-  secure: false,
-  auth: {
-    user: process.env.GMAIL,
-    pass: process.env.PASSWORD,
-  },
-});
+const resend = new Resend(process.env.Resend_api_key);
 
 const sendOtp = async ({ email, subject, html }) => {
   try {
-    await transport.sendMail({
-      from: process.env.GMAIL,
+    await resend.emails.send({
+      from: 'onboarding@resend.dev',
       to: email,
       subject,
       html,
@@ -24,7 +13,7 @@ const sendOtp = async ({ email, subject, html }) => {
     console.log("OTP sent successfully");
   } catch (error) {
     console.error("MAIL ERROR:", error);
-    throw new Error("Email sending failed");
+    throw error;
   }
 };
 
