@@ -37,7 +37,7 @@ export const loginUser = tryCatch(async (req, res) => {
   const subject = "verification for otp";
   const html = getOtpHtml({ email, otp });
 
-  // await sendOtp({ email, subject, html });
+  await sendOtp({ email, subject, html });
 
   res.json({
     message: "otp has been sent to your mail",
@@ -86,12 +86,11 @@ export const verifyUser = tryCatch(async (req, res) => {
   if (!user) {
     user = await User.create({ email });
   }
-  const tokenData = await generateToken(user._id, res);
+  await generateToken(user._id, res);
 
   res.status(200).json({
     message: "Logged in successfully",
     user,
-    // tokenData,
   });
 });
 
