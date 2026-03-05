@@ -15,8 +15,6 @@ export const newOrderCash = tryCatch(async (req, res) => {
     select: "title price",
   });
 
-  console.log(cart);
-
   if (!cart.length) return res.status(404).json({ message: "Cart is Empty" });
   let subTotal = 0;
   const items = cart.map((i) => {
@@ -190,9 +188,7 @@ export const newOrderOnline = async (req, res) => {
 };
 
 export const verifyPayment = async (req, res) => {
-
   try {
-  
     const { sessionId } = req.body;
     const session = await stripe.checkout.sessions.retrieve(sessionId);
     const { userId, method, phone, address, subTotal } = session.metadata;
@@ -210,11 +206,10 @@ export const verifyPayment = async (req, res) => {
         quantity: i.quantity,
       };
     });
-    const existingOrder = await Order.find({ paymentInfo: sessionId });
-    let order;
-    if (!existingOrder) {
+    let order = await Order.findOne({ paymentInfo: sessionId });
+    if (!order) {
       order = await Order.create({
-        item: cart.map((i) => ({
+        items: cart.map((i) => ({
           product: i.product._id,
           quantity: i.quantity,
         })),
@@ -227,7 +222,7 @@ export const verifyPayment = async (req, res) => {
         paymentInfo: sessionId,
       });
     }
-    for (let i of order.item) {
+    for (let i of order.items) {
       const product = await Product.findById(i.product);
       if (product) {
         product.stock -= i.quantity;
@@ -236,20 +231,20 @@ export const verifyPayment = async (req, res) => {
       }
     }
     await Cart.deleteMany({ user: req.user.id });
-    const user = User.findById(req.user.id);
-    const subject = " Order Confirmation";
-    const html = orderConfirmationHtml({
-      email: user.email,
-      products: item,
-      orderId: order._id,
-      totalAmount: subTotal,
-    });
-    await sendOrderConfirmation({
-      email: user.email,
-      subject,
-      html,
-    });
-    await sendOrderConfirmation({});
+    // const user = await User.findById(req.user.id);
+    // const subject = " Order Confirmation";
+    // const html = orderConfirmationHtml({
+    //   email: user.email,
+    //   products: order.items,
+    //   orderId: order._id,
+    //   totalAmount: subTotal,
+    // });
+   
+    // await sendOrderConfirmation({
+    //   email: user.email,
+    //   subject,
+    //   html,
+    // });
     res.status(200).json({
       message: "order created",
       order,

@@ -51,7 +51,6 @@ export const createProduct = tryCatch(async (req, res) => {
   }
   const { title, description, category, price, stock } = req.body;
   const files = req.files;
-  console.log("files:", files);
   if (!files || files.length === 0)
     return res.status(400).json({
       message: "Please give image",
