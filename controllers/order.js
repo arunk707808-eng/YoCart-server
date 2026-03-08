@@ -143,7 +143,7 @@ export const newOrderOnline = async (req, res) => {
     const { method, address, phone } = req.body;
     const cart = await Cart.find({ user: req.user.id }).populate("product");
     if (cart.length === 0) {
-      return res.status(404).jspn({
+      return res.status(404).json({
         message: "cart is empty",
       });
     }
