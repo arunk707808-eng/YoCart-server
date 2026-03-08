@@ -45,19 +45,19 @@ export const newOrderCash = tryCatch(async (req, res) => {
     }
   }
   await Cart.deleteMany({ user: req.user.id });
-  const user = await User.findById(req.user.id);
-  const subject = " Order Confirmation Mail";
-  const html = orderConfirmationHtml({
-    email: user.email,
-    products: items,
-    orderId: order._id,
-    totalAmount: subTotal,
-  });
-  await sendOrderConfirmation({
-    email: user.email,
-    subject,
-    html,
-  });
+  // const user = await User.findById(req.user.id);
+  // const subject = " Order Confirmation Mail";
+  // const html = orderConfirmationHtml({
+  //   email: user.email,
+  //   products: items,
+  //   orderId: order._id,
+  //   totalAmount: subTotal,
+  // });
+  // await sendOrderConfirmation({
+  //   email: user.email,
+  //   subject,
+  //   html,
+  // });
   res.status(200).json({
     message: "order created",
     order,
